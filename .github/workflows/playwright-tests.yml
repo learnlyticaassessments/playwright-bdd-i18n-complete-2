@@ -1,0 +1,64 @@
+name: Playwright i18n Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-i18n:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: [en-US, es-ES, fr-FR, de-DE, ja-JP, ar-SA]
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        playwright install
+    
+    - name: Validate translations
+      run: python utils/translation_validator.py
+    
+    - name: Run i18n tests
+      run: behave --tags=@i18n
+      env:
+        LOCALE: ${{ matrix.locale }}
+        BROWSER: ${{ matrix.browser }}
+        HEADLESS: true
+    
+    - name: Upload screenshots on failure
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots-${{ matrix.locale }}-${{ matrix.browser }}
+        path: screenshots/
+    
+    - name: Upload traces on failure
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: traces-${{ matrix.locale }}-${{ matrix.browser }}
+        path: traces/
+    
+    - name: Generate report
+      if: always()
+      run: behave -f html -o reports/report-${{ matrix.locale }}-${{ matrix.browser }}.html
+    
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: reports-${{ matrix.locale }}-${{ matrix.browser }}
+        path: reports/

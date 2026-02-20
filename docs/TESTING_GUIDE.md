@@ -3,7 +3,7 @@
 ## Test Writing Guidelines
 
 ### Gherkin Best Practices
-
+help guide:
 1. **Use Business Language**
    - ✅ Good: "When I log in as a customer"
    - ❌ Bad: "When I click #loginButton"

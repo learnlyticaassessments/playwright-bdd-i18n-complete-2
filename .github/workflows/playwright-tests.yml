@@ -16,7 +16,7 @@ jobs:
         browser: [chromium, firefox, webkit]
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -47,7 +47,7 @@ jobs:
     
     - name: Upload traces on failure
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: traces-${{ matrix.locale }}-${{ matrix.browser }}
         path: traces/
@@ -58,7 +58,7 @@ jobs:
     
     - name: Upload report
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: reports-${{ matrix.locale }}-${{ matrix.browser }}
         path: reports/
